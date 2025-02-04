@@ -6,11 +6,6 @@ import org.springframework.context.annotation.Bean;
 
 public class DependencyConfig {
     @Bean
-    public GameRepository gameRepository() {
-        return new GameRepository();
-    }
-
-    @Bean
     public GameService gameService(GameRepository gameRepository) {
         return new GameService(gameRepository);
     }

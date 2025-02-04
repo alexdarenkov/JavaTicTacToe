@@ -1,46 +1,71 @@
 package com.example.TicTacToe.web.controller;
 
-import com.example.TicTacToe.web.model.WebGame;
+import com.example.TicTacToe.domain.model.User;
+import com.example.TicTacToe.domain.service.UserService;
 import com.example.TicTacToe.domain.service.GameService;
-import static com.example.TicTacToe.web.mapper.WebDomainMapper.toDomainGame;
-import static com.example.TicTacToe.web.mapper.WebDomainMapper.toWebGame;
+import static com.example.TicTacToe.web.mapper.WebDomainMapper.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
+import com.example.TicTacToe.web.dto.GameRequest;
+import com.example.TicTacToe.web.dto.GameResponse;
+import com.example.TicTacToe.web.dto.NewGameParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/game")
 public class GameController {
     private final GameService gameService;
+    private final UserService userService;
 
-    public GameController(GameService gameService) {
+    public GameController(GameService gameService, UserService userService) {
         this.gameService = gameService;
+        this.userService = userService;
     }
 
-    // Создаю новую игру
-    @GetMapping("/new")
-    public ResponseEntity<WebGame> createNewGame() {
-        WebGame webGame = new WebGame(UUID.randomUUID());
-        gameService.addNewGame(webGame);
-        return ResponseEntity.ok(webGame);
+    @PostMapping("/new")
+    public ResponseEntity<GameResponse> createNewGame(@RequestBody NewGameParam gameParam, Principal principal) {
+        UUID userId = userService.getUserId(principal.getName());
+        return new ResponseEntity<>(toResponse(gameService.getNewGame(gameParam, userId)), CREATED);
+    }
+
+    @GetMapping("{id}/join")
+    public ResponseEntity<Void> joinGame(@PathVariable UUID id, Principal principal) {
+        UUID userId = userService.getUserId(principal.getName());
+        gameService.joinGame(id, userId);
+        return new ResponseEntity<>(OK);
+        // return new ResponseEntity<>(toResponse(game), OK);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<GameResponse> getGame(@PathVariable UUID id, Principal principal) {
+        UUID userId = userService.getUserId(principal.getName());
+        return new ResponseEntity<>(toResponse(gameService.getGame(id, userId)), OK);
     }
 
     @PostMapping("{id}")
-    public ResponseEntity<WebGame> updateGame(@PathVariable UUID id, @RequestBody WebGame webGame) {
-        String errorMessage = gameService.isValidMove(toDomainGame(webGame));
+    public ResponseEntity<GameResponse> postMove(
+            @PathVariable UUID id,
+            @RequestBody GameRequest gameRequest,
+            Principal principal) {
+        UUID userId = userService.getUserId(principal.getName());
+        return new ResponseEntity<>(toResponse(gameService.postMove(gameRequest, id, userId)), OK);
+    }
 
-        if (errorMessage.equals("OK")) {
-            WebGame responseWebGame = toWebGame(gameService.getNextMove(toDomainGame(webGame)));
-            String gameStatus = gameService.getGameStatus(toDomainGame(responseWebGame));
-            responseWebGame.setErrorMessage(errorMessage);
-            responseWebGame.setGameStatus(gameStatus);
-            return ResponseEntity.ok(responseWebGame);
-        }
+    @GetMapping("/waiting-for-prayers")
+    public ResponseEntity<List<UUID>> getFreeGame(Principal principal) {
+        // TODO Выводить список только игр тез игр где нет данного пользователя
+        return new ResponseEntity<>(gameService.getFreeGames(), OK);
+    }
 
-        webGame.setErrorMessage(errorMessage);
-        return ResponseEntity.badRequest().body(webGame);
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserIngo(@PathVariable UUID id) {
+        return new ResponseEntity<>(userService.getUserInfo(id), OK);
     }
 }

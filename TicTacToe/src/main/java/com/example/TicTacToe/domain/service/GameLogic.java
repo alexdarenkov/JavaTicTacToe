@@ -1,14 +1,9 @@
 package com.example.TicTacToe.domain.service;
 
-import java.util.Arrays;
+import static com.example.TicTacToe.domain.service.GameService.SIZE;
 
 public final class GameLogic {
-    private static final int SIZE = 3;
-    private static final int X = 1;
-    private static final int O = 2;
     private static final int WEIGHT = 10;
-    private static final int PLAYER = X;
-    private static final int COMPUTER = O;
 
     public static boolean isDraw(int[][] field) {
         for (int i = 0; i < SIZE; i++) {
@@ -46,21 +41,21 @@ public final class GameLogic {
     }
 
 
-    static int minimax(int[][] field, int currPlayer)
+    static int minimax(int[][] field, int currPlayer, int player, int computer)
     {
-        if (isWin(field, COMPUTER)) return WEIGHT;
-        if (isWin(field, PLAYER)) return -WEIGHT;
+        if (isWin(field, computer)) return WEIGHT;
+        if (isWin(field, player)) return -WEIGHT;
         if (isDraw(field)) return 0;
 
         // Ход компьютера
-        if (currPlayer == COMPUTER) {
+        if (currPlayer == computer) {
             int best = Integer.MIN_VALUE;
 
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     if (field[i][j] == 0) {
-                        field[i][j] = COMPUTER;
-                        best = Math.max(best, minimax(field, PLAYER));
+                        field[i][j] = computer;
+                        best = Math.max(best, minimax(field, player, player, computer));
                         field[i][j] = 0;
                     }
                 }
@@ -75,8 +70,8 @@ public final class GameLogic {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     if (field[i][j] == 0) {
-                        field[i][j] = PLAYER;
-                        best = Math.min(best, minimax(field, COMPUTER));
+                        field[i][j] = player;
+                        best = Math.min(best, minimax(field, computer, player, computer));
                         field[i][j] = 0;
                     }
                 }
@@ -87,7 +82,7 @@ public final class GameLogic {
     }
 
     // Находим самый выгодный ход для компьютера
-    static int[] findBestMove(int[][] field)
+    static int[] findBestMove(int[][] field, int player, int computer)
     {
         int bestScore = Integer.MIN_VALUE;
         int[] bestMove = new int[2];
@@ -95,8 +90,8 @@ public final class GameLogic {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (field[i][j] == 0) {
-                    field[i][j] = COMPUTER;
-                    int currScore = minimax(field, PLAYER);
+                    field[i][j] = computer;
+                    int currScore = minimax(field, player, player, computer);
                     field[i][j] = 0;
 
                     if (currScore > bestScore) {
@@ -109,43 +104,5 @@ public final class GameLogic {
         }
 
         return bestMove;
-    }
-
-
-    // Проверяем что первый ход игрока правильный
-    public static boolean checkFirstMove(int[][] field) {
-        long countOfZeros = Arrays.stream(field)
-                .flatMapToInt(Arrays::stream)
-                .filter(x -> x == 0)
-                .count();
-        long countOfPlayer = Arrays.stream(field)
-                .flatMapToInt(Arrays::stream)
-                .filter(x -> x == PLAYER)
-                .count();
-
-        if (countOfZeros == 8 && countOfPlayer == 1) {
-            return true;
-        }
-        return false;
-    }
-
-    // Проверяем последующие ходы игрока
-    public static boolean checkMove(int[][] prevField, int[][] currField) {
-        int diffCount = 0;
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                if (prevField[i][j] == 0 && (currField[i][j] == X || currField[i][j] == O)) {
-                    diffCount++;
-                } else if (prevField[i][j] != currField[i][j]) {
-                    return false;
-                }
-            }
-        }
-
-        if (diffCount > 1 || diffCount == 0) {
-            return false;
-        }
-
-        return true;
     }
 }
