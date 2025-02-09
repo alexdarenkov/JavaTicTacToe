@@ -1,10 +1,8 @@
 package com.example.TicTacToe.datasource.model;
 
+import com.example.TicTacToe.domain.model.Role;
 import com.example.TicTacToe.web.dto.GameState;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -21,4 +19,7 @@ public class DsUser {
     private String login;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

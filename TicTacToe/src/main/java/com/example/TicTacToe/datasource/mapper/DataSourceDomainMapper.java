@@ -5,6 +5,9 @@ import com.example.TicTacToe.datasource.model.DsGame;
 import com.example.TicTacToe.datasource.model.DsUser;
 import com.example.TicTacToe.domain.model.Game;
 import com.example.TicTacToe.domain.model.User;
+
+import java.util.Collections;
+
 import static com.example.TicTacToe.domain.service.GameService.SIZE;
 
 public class DataSourceDomainMapper {
@@ -63,6 +66,8 @@ public class DataSourceDomainMapper {
         user.setId(dataSourceUser.getId());
         user.setLogin(dataSourceUser.getLogin());
         user.setPassword(dataSourceUser.getPassword());
+        user.setRoles(Collections.singleton(dataSourceUser.getRole()));
+        System.out.println(user.getRoles());
         return user;
     }
 
@@ -71,6 +76,7 @@ public class DataSourceDomainMapper {
         dataSourceUser.setId(user.getId());
         dataSourceUser.setLogin(user.getLogin());
         dataSourceUser.setPassword(user.getPassword());
+        dataSourceUser.setRole(user.getRoles().iterator().next());
         return dataSourceUser;
     }
 }

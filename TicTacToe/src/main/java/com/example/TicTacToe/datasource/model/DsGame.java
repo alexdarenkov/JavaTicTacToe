@@ -3,6 +3,9 @@ package com.example.TicTacToe.datasource.model;
 import com.example.TicTacToe.web.dto.GameState;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -27,4 +30,7 @@ public class DsGame {
     @Enumerated(EnumType.STRING)
     @Column(name = "game_state")
     private GameState gameState;
+    @Column(name = "created_at")
+    @CreatedDate
+    private LocalDate createdAt;
 }

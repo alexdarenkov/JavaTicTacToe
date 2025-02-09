@@ -28,6 +28,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	runtimeOnly("org.postgresql:postgresql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("io.jsonwebtoken:jjwt:0.12.6")
+	implementation("org.springframework.boot:spring-boot-starter-websocket:3.4.2")
 }
 
 tasks.withType<Test> {
