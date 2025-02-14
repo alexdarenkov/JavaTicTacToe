@@ -1,118 +1,69 @@
 <template>
-  <div class="container mx-auto p-4 max-w-md space-y-8">
-    <!-- Секция создания игры -->
-    <section class="space-y-6">
-      <h2 class="text-2xl font-bold text-gray-800">Новая игра</h2>
+  <Header />
+  <div class="flex flex-col w-min m-auto gap-6 p-8 bg-[#f4f4f9] rounded-xl shadow-sm mt-8">
+    <h2 class="text-2xl font-semibold text-gray-800 text-center">Создать игру</h2>
 
-      <!-- Выбор значка -->
-      <div class="space-y-4">
-        <h3 class="text-sm font-semibold text-gray-600">Значок</h3>
-        <div class="flex gap-4">
-          <label
-              v-for="option in iconOptions"
-              :key="option.value"
-              class="flex-1 cursor-pointer"
-          >
-            <input
-                type="radio"
-                v-model="icon"
-                :value="option.value"
-                class="hidden"
-            />
-            <div
-                :class="[
-                'p-4 text-center rounded-lg border-2 transition-all',
-                icon === option.value
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
+    <!-- Выбор значка -->
+    <div class="space-y-4 bg-slate-50 p-6 rounded-lg shadow-md">
+      <h3 class="text-sm font-semibold text-gray-600 text-center">Выберите значок</h3>
+      <div class="flex gap-4 justify-center">
+        <label v-for="option in iconOptions" :key="option.value" class="cursor-pointer">
+          <input type="radio" v-model="icon" :value="option.value" class="hidden">
+          <div
+              :class="[
+              'h-14 w-22 flex justify-center items-center text-center border-2 rounded-lg transition-all shadow-sm',
+              icon === option.value
+                ? 'bg-purple-600 border-purple-600 text-white'
+                : 'border-gray-200 hover:bg-purple-600 hover:border-purple-600 active:bg-purple-800 text-gray-600 hover:text-white active:text-white'
               ]"
-            >
-              <span class="text-2xl font-bold block mb-2">{{ option.symbol }}</span>
-              <span class="text-gray-700 text-sm">{{ option.label }}</span>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <!-- Выбор оппонента -->
-      <div class="space-y-4">
-        <h3 class="text-sm font-semibold text-gray-600">Оппонент</h3>
-        <div class="flex gap-4">
-          <label
-              v-for="mode in gameModes"
-              :key="mode.value"
-              class="flex-1 cursor-pointer"
           >
-            <input
-                type="radio"
-                v-model="ai"
-                :value="mode.value"
-                class="hidden"
-            />
-            <div
-                :class="[
-                'p-4 text-center rounded-lg border-2 transition-all',
-                ai === mode.value
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
-              ]"
-            >
-              <span class="text-2xl block mb-2">{{ mode.emoji }}</span>
-              <span class="text-gray-700 text-sm">{{ mode.label }}</span>
-            </div>
-          </label>
-        </div>
+
+            <IconCross v-if="option.value === 1" class="w-5 h-5 m-auto"/>
+            <IconCircle v-else-if="option.value === 2" class="w-6 h-6 m-auto"/>
+
+          </div>
+        </label>
       </div>
+    </div>
 
-      <button
-          @click="createGame(ai)"
-          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-lg transition-colors"
-      >
-        Начать игру
-      </button>
-
-      <!-- Сообщения -->
-      <div
-          v-if="errorMessage"
-          class="p-3 rounded-lg bg-red-100 text-red-700 text-sm"
-      >
-        {{ errorMessage }}
-      </div>
-      <div
-          v-if="successMessage"
-          class="p-3 rounded-lg bg-green-100 text-green-700 text-sm"
-      >
-        {{ successMessage }}
-      </div>
-    </section>
-
-    <!-- Свободные игры -->
-    <section class="space-y-4">
-      <h2 class="text-lg font-semibold text-gray-800">Открытые игры</h2>
-
-      <div
-          v-if="freeGames.length === 0"
-          class="p-4 text-center text-gray-500 rounded-lg bg-gray-50"
-      >
-        Нет доступных игр
-      </div>
-
-      <ul v-else class="space-y-2">
-        <li
-            v-for="gameId in freeGames"
-            :key="gameId"
-            class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-100"
-        >
-          <span class="text-gray-700">Игра #{{ gameId }}</span>
-          <button
-              @click="joinGame(gameId)"
-              class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-md transition-colors"
+    <!-- Выбор оппонента -->
+    <div class="space-y-4 bg-slate-50 p-6 rounded-lg shadow-md">
+      <h3 class="text-sm font-semibold text-gray-600 text-center">Выберите оппонента</h3>
+      <div class="flex gap-4 justify-center">
+        <label v-for="mode in gameModes" :key="mode.value" class="cursor-pointer">
+          <input type="radio" v-model="ai" :value="mode.value" class="hidden"/>
+          <div
+              :class="[
+              'h-14 w-22 flex justify-center items-center text-center rounded-lg border-2 transition-all shadow-sm flex',
+              ai === mode.value
+                ? 'bg-purple-600 border-purple-600 text-white'
+                : 'border-gray-200 hover:bg-purple-600 hover:border-purple-600 active:bg-purple-800 text-gray-600 hover:text-white active:text-white'
+            ]"
           >
-            Присоединиться
-          </button>
-        </li>
-      </ul>
-    </section>
+            <IconAI v-if="mode.value === true" class="w-7 h-7"/>
+            <IconFriend v-else-if="mode.value === false" class="w-7 h-7"/>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button
+        @click="createGame(ai)"
+        class="bg-[rgb(68,235,153)] hover:bg-purple-600 text-black hover:text-white active:bg-purple-800 py-2 px-6 rounded-lg cursor-pointer shadow-sm"
+    >
+      Создать игру
+    </button>
+
+    <Alert :message="errorMessage" />
+
+    <div
+        v-if="successMessage"
+        class="p-3 rounded-lg bg-green-100 text-green-700 text-sm"
+    >
+      {{ successMessage }}
+    </div>
+
+
   </div>
 </template>
 
@@ -120,23 +71,29 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from "@/services/api.js";
+import Header from "@/components/Header.vue";
+import IconCross from "@/assets/IconCross.vue";
+import IconCircle from "@/assets/IconCircle.vue";
+import IconAI from "@/assets/IconAI.vue";
+import IconFriend from "@/assets/IconFriend.vue";
+import Alert from "@/components/Alert.vue";
 
 const router = useRouter()
 
 const icon = ref(1)
+const isFirstPlayer = ref(true)
 const ai = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
-const freeGames = ref([])
 
 const iconOptions = [
-  { value: 1, symbol: '✕', label: 'Играть за X' },
-  { value: 2, symbol: '○', label: 'Играть за O' }
+  { value: 1 },
+  { value: 2 }
 ]
 
 const gameModes = [
-  { value: true, emoji: '👾', label: 'Против ИИ' },
-  { value: false, emoji: '👥', label: 'С другом' }
+  { value: true },
+  { value: false }
 ]
 
 const createGame = async (vsAI) => {
@@ -152,12 +109,15 @@ const createGame = async (vsAI) => {
     console.log(response)
 
     if (response.status === 201) {
-      localStorage.setItem('icon', icon.value)
+      if (icon.value === 2) {
+        isFirstPlayer.value = false
+      }
+      localStorage.setItem('isFirstPlayer', isFirstPlayer.value)
       const gameId = response.data.id
       console.log('ID:')
       console.log(gameId)
       router.push({
-        name: vsAI ? 'GameWithAI' : 'GameWithUser',
+        name: 'Game',
         params: { id: gameId }
       })
     }
@@ -167,28 +127,4 @@ const createGame = async (vsAI) => {
   }
 }
 
-const getFreeGames = async () => {
-  try {
-    const response = await api.getFreeGames()
-    freeGames.value = response.data
-  } catch (error) {
-    console.error('Ошибка загрузки игр:', error)
-    errorMessage.value = 'Не удалось загрузить список игр'
-  }
-}
-
-const joinGame = async (gameId) => {
-  try {
-    const response = await api.joinGame(gameId)
-
-    if (response.status === 200) {
-      router.push({ name: 'GameWithUser', params: { id: gameId } })
-    }
-  } catch (error) {
-    console.error('Ошибка подключения:', error)
-    errorMessage.value = 'Не удалось присоединиться к игре'
-  }
-}
-
-onMounted(getFreeGames)
 </script>

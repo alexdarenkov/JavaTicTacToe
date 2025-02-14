@@ -1,5 +1,6 @@
 package com.example.TicTacToe.domain.service;
 
+import com.example.TicTacToe.datasource.model.FreeGame;
 import com.example.TicTacToe.datasource.repository.GameRepository;
 import com.example.TicTacToe.domain.exceptions.InvalidMoveException;
 import com.example.TicTacToe.domain.exceptions.ResourceNotFoundException;
@@ -120,7 +121,7 @@ public class GameService {
     }
 
 
-    public List<UUID> getFreeGames() {
+    public List<FreeGame> getFreeGames() {
         Pageable pageable = PageRequest.of(0, 10);
         return gameRepository.findFreeGames(pageable);
     }
@@ -155,7 +156,7 @@ public class GameService {
         return game;
     }
 
-    public void joinGame(UUID gameId, UUID userId) {
+    public Game joinGame(UUID gameId, UUID userId) {
         Game game = getGameById(gameId);
         if (!game.getGameState().equals(WAITING_FOR_PLAYERS)) {
             throw new GameRequestException("This game is busy");
@@ -171,11 +172,14 @@ public class GameService {
         }
         game.setGameState(FIRST_PLAYER_TURN);
         saveGame(game);
+        return game;
     }
 
     public Game getGame(UUID gameId, UUID userId) {
         Game game = getGameById(gameId);
         if (!(userId.equals(game.getFirstPlayer()) || userId.equals(game.getSecondPlayer()))) {
+            System.out.println(game.getFirstPlayer());
+            System.out.println(game.getSecondPlayer());
             throw new GameRequestException("You do not have access to this game");
         }
         return game;

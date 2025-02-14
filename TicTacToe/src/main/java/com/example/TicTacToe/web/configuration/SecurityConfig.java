@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8000")); // Укажите URL вашего фронтенда
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // URL фронта
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Включить поддержку CORS
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class) // Добавить кастомный фильтр
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/access").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login", "/auth/access", "/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable());
@@ -54,19 +54,4 @@ public class SecurityConfig {
         System.out.println(h);
         return h;
     }
-
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .httpBasic(Customizer.withDefaults())
-//                .csrf(csrf -> csrf.disable())
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .sessionManagement(session ->
-//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(authz -> authz
-//                        .requestMatchers("/auth/register", "/auth/login").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .addFilterAfter(authFilter, UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
 }

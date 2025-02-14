@@ -14,3 +14,6 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     role VARCHAR(255) NOT NULL
 );
+
+TRUNCATE TABLE game;
+TRUNCATE TABLE users;
