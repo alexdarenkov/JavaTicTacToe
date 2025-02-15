@@ -19,7 +19,8 @@ public interface GameRepository extends CrudRepository<DsGame, UUID> {
         JOIN DsUser u ON g.firstPlayer = u.id OR g.secondPlayer = u.id 
         WHERE (g.firstPlayer IS NULL OR g.secondPlayer IS NULL) 
         AND g.playWithAi = false
-        ORDER BY g.createdAt""")
+        ORDER BY g.createdAt
+        """)
     List<FreeGame> findFreeGames(Pageable pageable);
 
     @Query(value = """

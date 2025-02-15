@@ -67,7 +67,9 @@ public class DataSourceDomainMapper {
         user.setLogin(dataSourceUser.getLogin());
         user.setPassword(dataSourceUser.getPassword());
         user.setRoles(Collections.singleton(dataSourceUser.getRole()));
-        System.out.println(user.getRoles());
+        user.setCountWin(dataSourceUser.getCountWin());
+        user.setCountDraw(dataSourceUser.getCountDraw());
+        user.setCountLose(dataSourceUser.getCountLose());
         return user;
     }
 
@@ -77,6 +79,9 @@ public class DataSourceDomainMapper {
         dataSourceUser.setLogin(user.getLogin());
         dataSourceUser.setPassword(user.getPassword());
         dataSourceUser.setRole(user.getRoles().iterator().next());
+        dataSourceUser.setCountWin(user.getCountWin());
+        dataSourceUser.setCountDraw(user.getCountDraw());
+        dataSourceUser.setCountLose(user.getCountLose());
         return dataSourceUser;
     }
 }

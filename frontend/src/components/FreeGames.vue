@@ -26,7 +26,7 @@
             :key="game.id"
             class="flex items-center flex-row gap-3 p-3 bg-white rounded-lg shadow-sm"
         >
-          <div class="bg-slate-100 rounded-lg shadow-md p-3 w-30">
+          <div class="bg-slate-100 rounded-lg shadow-sm p-3 w-30">
             <p class="text-center text-xs ibm-plex-mono text-slate-700 truncate"> {{ game.login }} </p>
           </div>
 
@@ -82,6 +82,7 @@ const joinGame = async (gameId) => {
   try {
     const response = await api.joinGame(gameId);
     if (response.status === 200) {
+      localStorage.setItem('isFirstPlayer', false)
       router.push({ name: 'Game', params: { id: gameId } });
     } else {
       errorMessage.value = 'Error joining the game';

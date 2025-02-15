@@ -11,7 +11,6 @@ import com.example.TicTacToe.web.dto.NewGameParam;
 import com.example.TicTacToe.domain.exceptions.GameRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,17 +27,37 @@ public class GameService {
     public static final int X = 1;
     public static final int O = 2;
 
+    private final UserService userService;
     private final GameRepository gameRepository;
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(GameRepository gameRepository, UserService userService) {
         this.gameRepository = gameRepository;
+        this.userService = userService;
     }
 
     private GameState updateGameStatus(Game game) {
         int[][] field = game.getField();
-        if (isWin(field, X)) return FIRST_PLAYER_WON;
-        if (isWin(field, O)) return SECOND_PLAYER_WON;
-        if (isDraw(field)) return DRAW;
+        if (isWin(field, X)) {
+            if (!game.isPlayWithAi()) {
+                userService.updateUserCount(game.getFirstPlayer(), true, false, false);
+                userService.updateUserCount(game.getSecondPlayer(), false, false, true);
+            }
+            return FIRST_PLAYER_WON;
+        }
+        if (isWin(field, O)) {
+            if (!game.isPlayWithAi()) {
+                userService.updateUserCount(game.getFirstPlayer(), false, false, true);
+                userService.updateUserCount(game.getSecondPlayer(), true, false, false);
+            }
+            return SECOND_PLAYER_WON;
+        }
+        if (isDraw(field)) {
+            if (!game.isPlayWithAi()) {
+                userService.updateUserCount(game.getFirstPlayer(), false, true, false);
+                userService.updateUserCount(game.getSecondPlayer(), false, true, false);
+            }
+            return DRAW;
+        }
         if (game.getGameState().equals(FIRST_PLAYER_TURN)) return SECOND_PLAYER_TURN;
         if (game.getGameState().equals(SECOND_PLAYER_TURN)) return FIRST_PLAYER_TURN;
         return game.getGameState();

@@ -12,8 +12,14 @@ CREATE TABLE users (
     id UUID PRIMARY KEY,
     login VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(255) NOT NULL
+    role VARCHAR(255) NOT NULL,
+    count_win BIGINT DEFAULT 0,
+    count_draw BIGINT DEFAULT 0,
+    count_lose BIGINT DEFAULT 0
 );
+
+DROP TABLE game;
+DROP TABLE users;
 
 TRUNCATE TABLE game;
 TRUNCATE TABLE users;

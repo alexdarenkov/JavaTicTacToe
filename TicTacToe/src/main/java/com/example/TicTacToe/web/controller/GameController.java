@@ -78,8 +78,13 @@ public class GameController {
         return new ResponseEntity<>(gameService.getFreeGames(), OK);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserIngo(@PathVariable UUID id) {
-        return new ResponseEntity<>(userService.getUserById(id), OK);
+    @GetMapping("/user/{login}")
+    public ResponseEntity<User> getUserInfo(@PathVariable String login) {
+        return new ResponseEntity<>(userService.getUserByLogin(login), OK);
+    }
+
+    @GetMapping("/top/{limit}")
+    public ResponseEntity<List<User>> getGames(@PathVariable int limit) {
+        return new ResponseEntity<>(userService.topUsers(limit), OK);
     }
 }

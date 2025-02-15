@@ -5,6 +5,7 @@ import Welcome from '../components/Welcome.vue';
 import Menu from '../components/Menu.vue';
 import Game from "@/components/Game.vue";
 import FreeGames from "@/components/FreeGames.vue";
+import TopUsers from "@/components/TopUsers.vue";
 
 const routes = [
     { path: '/login', component: LoginForm },
@@ -13,6 +14,7 @@ const routes = [
     { path: '/menu', component: Menu },
     { path: '/game/:id', component: Game, name: 'Game', props: true },
     { path: '/find-game', component: FreeGames, name: 'FreeGames', props: true },
+    { path: '/top-users', component: TopUsers, name: 'TopUsers' },
     { path: '/', redirect: '/login' }
 ];
 

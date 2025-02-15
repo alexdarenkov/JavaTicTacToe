@@ -1,7 +1,6 @@
 package com.example.TicTacToe.datasource.model;
 
 import com.example.TicTacToe.domain.model.Role;
-import com.example.TicTacToe.web.dto.GameState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +21,10 @@ public class DsUser {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(name = "count_win")
+    private long countWin = 0;
+    @Column(name = "count_draw")
+    private long countDraw = 0;
+    @Column(name = "count_lose")
+    private long countLose = 0;
 }

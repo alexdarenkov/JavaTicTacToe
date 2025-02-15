@@ -35,6 +35,7 @@ const auth = async () => {
     })
 
     if (response.status === 200) {
+      localStorage.setItem('login', login.value)
       localStorage.setItem('accessToken', response.data.accessToken)
       localStorage.setItem('refreshToken', response.data.refreshToken)
       router.push('/menu')

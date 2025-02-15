@@ -1,8 +1,8 @@
 <template>
   <Header />
 
-  <div class="relative w-min m-auto gap-8 items-center bg-slate-50 rounded-xl shadow-sm mt-8 p-10 space-y-6">
-    <h1 class="text-2xl font-semibold text-black text-center">Tic-Tac-Toe</h1>
+  <div class="relative w-min m-auto gap-8 items-center rounded-xl shadow-sm mt-8 p-4 bg-[#f4f4f9] space-y-6">
+    <h1 class="text-xl font-semibold text-black text-center">Tic-Tac-Toe</h1>
 
     <div v-if="statusMessage" :class="['relative shadow-md rounded-md p-2 text-black', statusMessage === 'It\'s your turn' ? 'bg-[rgb(47,228,211)]' : 'bg-[rgb(255,197,64)]']">
       <p class="text-center font-semibold text-sm">{{statusMessage}}</p>
@@ -74,7 +74,7 @@ const message = ref('')
 const statusMessage = ref('')
 const loading = ref(true)
 const gameEnded = ref(false)
-const isFirstPlayer = localStorage.getItem('isFirstPlayer')
+const isFirstPlayer = localStorage.getItem('isFirstPlayer') === 'true'
 
 // Получение текущего состояния игры
 const getGame = async (id) => {
@@ -119,11 +119,12 @@ const checkGameStatus = (gameState) => {
   const currStatusMap = {
     'WAITING_FOR_PLAYERS' : 'Waiting second player',
     'FIRST_PLAYER_TURN': (isFirstPlayer ? 'It\'s your turn' : 'It\'s second player turn'),
-    'SECOND_PLAYER_TURN' : (isFirstPlayer ? 'It\'s your turn' : 'It\'s second player turn')
+    'SECOND_PLAYER_TURN' : (!isFirstPlayer ? 'It\'s your turn' : 'It\'s second player turn')
   }
-
+  console.log(currStatusMap[gameState])
+  console.log(isFirstPlayer)
   const endedStatusMap = {
-    'FIRST_PLAYER_WON': (!isFirstPlayer ? 'You win! 🥳' : 'You lose! 😞'),
+    'FIRST_PLAYER_WON': (isFirstPlayer ? 'You win! 🥳' : 'You lose! 😞'),
     'SECOND_PLAYER_WON': (!isFirstPlayer ? 'You win! 🥳' : 'You lose! 😞'),
     'DRAW': 'Draw! 😑'
   }
@@ -152,4 +153,6 @@ onMounted(async () => {
 onUnmounted(() => {
   websocket.disconnect()
 })
+
+
 </script>

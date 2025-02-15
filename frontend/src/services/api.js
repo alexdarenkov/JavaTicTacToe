@@ -110,5 +110,11 @@ export default {
     },
     postMove(gameId, move) {
         return api.post(`/game/${gameId}`, move)
+    },
+    getTopUsers(limit) {
+        return api.get(`/game/top/${limit}`)
+    },
+    getCurrUser(login) {
+        return api.get(`/game/user/${login}`)
     }
 };
